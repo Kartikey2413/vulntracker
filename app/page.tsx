@@ -1,65 +1,19 @@
-"use client";
-
-import { useState } from 'react';
-import Link from 'next/link';
-
-// Your data source
-const cves = [
-  { id: 'CVE-2024-3094', title: 'XZ Utils Backdoor — Supply Chain Compromise', severity: 'Critical', status: 'Open' },
-  { id: 'CVE-2024-21762', title: 'Fortinet SSL-VPN Out-of-Bounds Write RCE', severity: 'High', status: 'In Review' },
-  { id: 'CVE-2024-32002', title: 'Git Submodule Arbitrary Code Execution', severity: 'Medium', status: 'Patched' },
-];
-
-export default function Dashboard() {
-  const [filter, setFilter] = useState('All');
-
-  // Filter the data based on selection
-  const filteredData = filter === 'All' 
-    ? cves 
-    : cves.filter((cve) => cve.status === filter);
+export default async function VulnerabilityDetail({ params }: { params: Promise<{ id: string }> }) {
+  // Await the params to resolve the Promise
+  const { id } = await params;
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Vulnerability Dashboard</h1>
-      
-      {/* Filter Buttons */}
-      <div className="mb-6 space-x-2">
-        {['All', 'Open', 'In Review', 'Patched'].map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded transition-colors ${
-              filter === status ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-          >
-            {status}
-          </button>
-        ))}
+      <h1 className="text-3xl font-bold mb-4">Vulnerability Details</h1>
+      <div className="p-6 bg-white shadow rounded-lg border">
+        <p className="text-xl font-semibold">CVE ID: {id}</p>
+        <p className="mt-4 text-gray-600">
+          This is the dedicated detail view for vulnerability <strong>{id}</strong>.
+        </p>
+        <a href="/" className="mt-6 inline-block text-blue-600 hover:underline">
+          ← Back to Dashboard
+        </a>
       </div>
-
-      {/* Table */}
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-2">CVE ID</th>
-            <th className="text-left p-2">Title</th>
-            <th className="text-left p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((item) => (
-            <tr key={item.id} className="border-b hover:bg-gray-50 transition-colors">
-              <td className="p-2">
-                <Link href={`/vulnerability/${item.id}`} className="text-blue-600 underline font-medium">
-                  {item.id}
-                </Link>
-              </td>
-              <td className="p-2">{item.title}</td>
-              <td className="p-2">{item.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
